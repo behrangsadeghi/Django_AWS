@@ -1,0 +1,62 @@
+name: Deploy Django Project to EC2
+
+on:
+  push:
+    branches:
+      - main  # Trigger deployment on push to the main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      DJANGO_SETTINGS_MODULE: edoramedia_myproject.settings  # Replace with your actual Django settings module
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Start EC2 instance
+      id: start_ec2
+      run: |
+        aws ec2 start-instances --instance-ids ${{ secrets.EC2_INSTANCE_ID }}
+        aws ec2 wait instance-running --instance-ids ${{ secrets.EC2_INSTANCE_ID }}
+      shell: bash
+
+    - name: Wait for SSH to become available
+      run: |
+        sleep 60  # wait for instance to be ready for SSH connection
+
+    - name: Deploy Django Project to EC2
+      uses: appleboy/ssh-action@v0.1.7
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USER }}
+        key: ${{ secrets.EC2_KEY }}
+        script: |
+          # Install dependencies if necessary
+          sudo apt update -y
+          sudo apt install -y python3-pip
+          sudo pip3 install -r requirements.txt
+
+          # Apply Django migrations
+          python3 manage.py migrate
+
+          # Collect static files
+          python3 manage.py collectstatic --noinput
+
+          # Restart the Gunicorn service
+          sudo systemctl restart gunicorn
+
+    - name: Stop EC2 instance after deployment
+      if: always()
+      run: |
+        aws ec2 stop-instances --instance-ids ${{ secrets.EC2_INSTANCE_ID }}
+        aws ec2 wait instance-stopped --instance-ids ${{ secrets.EC2_INSTANCE_ID }}
