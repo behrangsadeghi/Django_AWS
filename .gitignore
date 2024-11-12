@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+*.egg-info/
+*.egg
+*.whl
+
+# Virtual Environments
+env/
+venv/
+ENV/
+.venv/
+
+# Django
+*.log
+*.pot
+*.pyc
+*.pyo
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/
+.DS_Store
+
+# Environment variables
+.env
+.env.*
+
+# Migrations
+**/migrations/*.py
+!**/migrations/__init__.py
+
+# AWS
+.aws-sam/
+.aws/config
+.aws/credentials
+
+# Lambda function package
+django_lambda_function.zip
+
+# macOS
+.DS_Store
+
+# Editor-specific files
+.vscode/
+.idea/
+*.swp
+
+# System files
+Thumbs.db
