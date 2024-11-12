@@ -28,8 +28,8 @@ This project demonstrates a simple primitive serverless, event-driven architectu
 1. **Clone the repository**:
 
     ```bash
-    git clone https://github.com/sadeghibehrang/Django_AWS.git
-    cd your-repo-name
+    git clone https://github.com/behrangsadeghi/Django_AWS.git
+    cd Django_AWS
     ```
 
 2. **Set up a virtual environment and install dependencies**:
