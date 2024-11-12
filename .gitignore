@@ -27,7 +27,6 @@ staticfiles/
 
 # Environment variables
 .env
-.env.*
 
 # Migrations
 **/migrations/*.py
